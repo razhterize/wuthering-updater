@@ -73,9 +73,9 @@ downloadGameFiles() {
         # Download All Files
         echo Origin
         downloadDir=$(pwd)
-        echo $patchConfig | jq -r > $downloadDir/gameResource.json
+        echo $patchConfig | jq -r >$downloadDir/gameResource.json
         echo $patchConfig | jq '.resource[] | "\(.dest) \(.md5)"' | while read resource; do
-            IFS=' ' read -r -a array <<< "$resource"
+            IFS=' ' read -r -a array <<<"$resource"
             dest=$(echo ${array[0]} | sed 's/"//g')
             hash=$(echo ${array[1]} | sed 's/"//g')
             local url="$cdn$basePath$dest"
@@ -112,11 +112,17 @@ downloadGameFiles() {
 startPatching() {
     echo "Patching game"
     local diffFile=$(find $downloadDir -name '*.krdiff')
+    if [[ $HPATCHZ_PATH == "" && ! -f "$gameDir/hpatchz.exe" ]]; then
+        echo hpatchz binary file path not found. Please set HPATCHZ_PATH or put the binary in the same folder as this script
+    fi
+    if [[ -f "$gameDir/hpatchz.exe" ]]; then
+        HPATCHZ_PATH="$gameDir/hpatchz.exe"
+    fi
     WINEDEBUG=-all
     wine $HPATCHZ_PATH $gameDir $diffFile $gameDir -f -s16M
     if [[ "$?" != "0" ]]; then
         echo "Failed to patch game"
-        exit
+        exit 1
     fi
     find $downloadDir -mindepth 1 -maxdepth 1 -not -name '*.krdiff' | xargs -o mv -t $gameDir
 }
