@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 LAUNCHER_INDEX="https://prod-alicdn-gamestarter.kurogame.com/launcher/game/G153/50004_obOHXFrFanqsaIEOmuKroCcbZkQRBC7c/index.json"
-HPATCHZ_PATH="g"
+HPATCHZ_PATH=""
 if [[ $1 ]]; then
     LAUNCHER_INDEX=$1
 fi
@@ -20,12 +20,14 @@ downloadType=""
 
 verifyGameFileHash() {
     echo "Verifying game file hashes"
-    cat "$gameDir/LocalGameResources.json" | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
+    cat "$gameDir/gameResource.json" | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
 }
 
 verifyPatchFileHash() {
     echo "Verifying patch file hashes"
+    cd $downloadDir
     cat $patchConfig | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
+    cd $gameDir
 }
 
 fetchGameIndex() {
@@ -122,8 +124,8 @@ startPatching() {
 main() {
     fetchGameIndex
     downloadGameFiles
-    # verifyPatchFileHash
-    # verifyGameFileHash
+    verifyPatchFileHash
+    verifyGameFileHash
 }
 
 main
