@@ -73,12 +73,12 @@ downloadGameFiles() {
         downloadDir=$(pwd)
         echo $patchConfig | jq -r > $downloadDir/gameResource.json
         echo $patchConfig | jq '.resource[] | "\(.dest) \(.md5)"' | while read resource; do
-            IFS=' ' read -r -a array <<<"$resource"
+            IFS=' ' read -r -a array <<< "$resource"
             dest=$(echo ${array[0]} | sed 's/"//g')
             hash=$(echo ${array[1]} | sed 's/"//g')
             local url="$cdn$basePath$dest"
-            echo Downloading $dest from $url
-            downloadFile $url $downloadDir/$dest
+            echo Downloading "$dest" from $url
+            downloadFile $url "$downloadDir/$dest"
         done
     elif [[ "$downloadType" = "patch" ]]; then
         # Download Patch
