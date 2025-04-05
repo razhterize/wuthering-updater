@@ -21,12 +21,20 @@ downloadType=""
 verifyGameFileHash() {
     echo "Verifying game file hashes"
     cat "$gameDir/gameResource.json" | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
+    if [[ "$?" != "0" ]]; then
+        echo "Failed to verify game file hashes"
+        exit $?
+    fi
 }
 
 verifyPatchFileHash() {
     echo "Verifying patch file hashes"
     cd $downloadDir
     cat $patchConfig | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
+    if [[ "$?" != "0" ]]; then
+        echo "Failed to verify patch file hashes"
+        exit $?
+    fi
     cd $gameDir
 }
 
@@ -129,6 +137,7 @@ startPatching() {
 main() {
     fetchGameIndex
     downloadGameFiles
+    if [[  ]]
     verifyPatchFileHash
     verifyGameFileHash
 }
