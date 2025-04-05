@@ -118,8 +118,7 @@ startPatching() {
     if [[ -f "$gameDir/hpatchz.exe" ]]; then
         HPATCHZ_PATH="$gameDir/hpatchz.exe"
     fi
-    WINEDEBUG=-all
-    wine $HPATCHZ_PATH $gameDir $diffFile $gameDir -f -s16M
+    WINEDEBUG=-all wine $HPATCHZ_PATH $gameDir $diffFile $gameDir -f -s16M
     if [[ "$?" != "0" ]]; then
         echo "Failed to patch game"
         exit 1
