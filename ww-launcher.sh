@@ -97,7 +97,7 @@ downloadGameFiles() {
                 local url="$cdn$basePath$dest"
             fi
             echo Downloading $dest from $url
-            downloadFile $url "$downloadDir/$dest"
+            downloadFile "$url" "$downloadDir/$dest"
         done
 
     elif [[ "$downloadType" = "clear" ]]; then
@@ -112,7 +112,7 @@ downloadGameFiles() {
 startPatching() {
     echo "Patching game"
     local diffFile=$(find $downloadDir -name '*.krdiff')
-    if [[ $HPATCHZ_PATH == "" && ! -f "$gameDir/hpatchz.exe" ]]; then
+    if [[ "$HPATCHZ_PATH" == "" && ! -f "$gameDir/hpatchz.exe" ]]; then
         echo hpatchz binary file path not found. Please set HPATCHZ_PATH or put the binary in the same folder as this script
     fi
     if [[ -f "$gameDir/hpatchz.exe" ]]; then
