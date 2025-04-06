@@ -30,7 +30,8 @@ verifyGameFileHash() {
 verifyPatchFileHash() {
     echo "Verifying patch file hashes"
     cd $downloadDir
-    cat $patchConfig | jq -r '.resource[] | "\(.md5)  \(.dest)"' | md5sum -c
+    local hashString=$(echo $resourceList | jq -r --arg dir $downloadDir '.resource[] | "\(.md5)  \(.dest)"')
+    md5sum -c <<< "$hashString"
     if [[ "$?" != "0" ]]; then
         echo "Failed to verify patch file hashes"
         exit $?
