@@ -39,21 +39,18 @@ verifyPatchFileHash() {
 }
 
 fetchGameIndex() {
-    local latestVersion=$(echo "$defaultConfig" | jq ".version")
+    local latestVersion=$(echo "$defaultConfig" | jq ".version" | sed 's/"//g')
     echo Latest Version: $latestVersion
     if [[ -f "$gameDir/launcherDownloadConfig.json" ]]; then
         echo Game exist. Starting patch download
-        local currentVersion=$(cat $gameDir/launcherDownloadConfig.json | jq '.version')
+        local currentVersion=$(cat $gameDir/launcherDownloadConfig.json | jq '.version' | sed 's/"//g')
         # echo Current Version: $currentVersion
         mainConfig=$(echo $launcherIndex | jq '.default | .config')
-        # echo Main Config: $mainConfig
-        if [[ $latestVersion != $currentVersion ]]; then
+        if [[ 1 ]]; then
             downloadDir=$downloadDir/$(echo $latestVersion | sed 's/"//g')
-            echo $downloadDir
-            echo "Getting $latestVersion config"
-            patchConfig=$(echo $mainConfig | jq ".patchConfig[] | select(.version == $currentVersion)")
-            # echo $patchConfig
-            local url=$cdn$(echo $patchConfig | jq '.indexFile' | sed 's/"//g')
+            echo "Getting $currentVersion -> $latestVersion config"
+            patchConfig=$(echo $mainConfig | jq --arg version $currentVersion '.patchConfig[] | select(.version==$version)')
+            local url="$cdn$(echo $patchConfig | jq '.indexFile' | sed 's/"//g')"
             echo "Downloading config from $url"
             resourceList="$(curl -fsSL $url)"
             downloadType="patch"
@@ -88,7 +85,7 @@ downloadGameFiles() {
             hash=$(echo ${array[1]} | sed 's/"//g')
             local url="$cdn$basePath$dest"
             echo Downloading "$dest" from $url
-            downloadFile $url "$downloadDir/$dest"
+            downloadFile "$url" "$downloadDir/$dest"
         done
     elif [[ "$downloadType" = "patch" ]]; then
         # Download Patch
