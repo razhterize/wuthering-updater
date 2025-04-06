@@ -136,6 +136,7 @@ main() {
     fetchGameIndex
     downloadGameFiles
     verifyPatchFileHash
+    startPatching
     verifyGameFileHash
 }
 
