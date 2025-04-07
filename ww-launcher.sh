@@ -47,7 +47,7 @@ fetchGameIndex() {
         local currentVersion=$(cat $gameDir/launcherDownloadConfig.json | jq '.version' | sed 's/"//g')
         # echo Current Version: $currentVersion
         mainConfig=$(echo $launcherIndex | jq '.default | .config')
-        if [[ 1 ]]; then
+        if [[ "$currentVersion" != "$latestVersion" ]]; then
             downloadDir=$downloadDir/$(echo $latestVersion | sed 's/"//g')
             echo "Getting $currentVersion -> $latestVersion config"
             patchConfig=$(echo $mainConfig | jq --arg version $currentVersion '.patchConfig[] | select(.version==$version)')
